@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - Solar Energy Prediction{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header slide-down">
+        <h1>Prediction History</h1>
+        <p>View all your solar energy predictions</p>
+    </div>
+    
+    {% if predictions.items %}
+        <div class="history-controls slide-up">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search predictions..." class="search-input">
+            </div>
+        </div>
+        
+        <div class="predictions-wrapper slide-up">
+            <div class="predictions-grid">
+                {% for prediction in predictions.items %}
+                    <div class="prediction-card">
+                        <div class="card-header">
+                            <span class="prediction-date">
+                                <i class="fas fa-calendar"></i>
+                                {{ prediction.created_at.strftime('%Y-%m-%d') }}
+                            </span>
+                            <button class="delete-btn" onclick="deletePrediction({{ prediction.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="power-display">
+                                <div class="power-value">{{ prediction.predicted_power }}</div>
+                                <div class="power-unit">kW</div>
+                            </div>
+                            
+                            <div class="weather-details">
+                                <div class="detail-item">
+                                    <span class="detail-label"><i class="fas fa-thermometer"></i> Temp:</span>
+                                    <span class="detail-value">{{ prediction.temperature }}°C</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label"><i class="fas fa-wind"></i> Wind:</span>
+                                    <span class="detail-value">{{ prediction.wind_speed }} m/s</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label"><i class="fas fa-droplet"></i> Humidity:</span>
+                                    <span class="detail-value">{{ prediction.humidity }}%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label"><i class="fas fa-cloud"></i> Sky:</span>
+                                    <span class="detail-value">{{ (prediction.sky_cover * 100)|int }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <small>{{ prediction.created_at.strftime('%H:%M:%S') }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if predictions.pages > 1 %}
+            <div class="pagination slide-up">
+                {% if predictions.has_prev %}
+                    <a href="{{ url_for('history', page=predictions.prev_num) }}" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                {% endif %}
+                
+                <div class="pagination-info">
+                    Page {{ predictions.page }} of {{ predictions.pages }}
+                </div>
+                
+                {% if predictions.has_next %}
+                    <a href="{{ url_for('history', page=predictions.next_num) }}" class="pagination-btn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state slide-up">
+            <i class="fas fa-history"></i>
+            <h3>No predictions yet</h3>
+            <p>You haven't made any predictions yet. Start by creating one!</p>
+            <a href="{{ url_for('predict') }}" class="btn btn-primary">Make First Prediction</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function deletePrediction(predictionId) {
+        if (confirm('Are you sure you want to delete this prediction?')) {
+            fetch(`/api/predictions/delete/${predictionId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Prediction deleted successfully', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Failed to delete prediction', 'error');
+                }
+            });
+        }
+    }
+    
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.prediction-card');
+        
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+    });
+</script>
+{% endblock %}

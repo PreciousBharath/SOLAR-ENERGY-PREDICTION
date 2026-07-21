@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Solar Energy Prediction{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1 class="fade-in">Welcome, {{ current_user.full_name or current_user.username }}! ☀️</h1>
+            <p class="header-subtitle">Monitor and predict your solar energy yield</p>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card slide-up" style="animation-delay: 0.1s">
+            <div class="stat-icon solar-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Predictions</h3>
+                <p class="stat-value">{{ stats.total_predictions }}</p>
+                <small>Predictions made</small>
+            </div>
+        </div>
+        
+        <div class="stat-card slide-up" style="animation-delay: 0.2s">
+            <div class="stat-icon wind-icon">
+                <i class="fas fa-wind"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Average Power</h3>
+                <p class="stat-value">{{ stats.avg_power }} kW</p>
+                <small>Average output</small>
+            </div>
+        </div>
+        
+        <div class="stat-card slide-up" style="animation-delay: 0.3s">
+            <div class="stat-icon cloud-icon">
+                <i class="fas fa-cloud"></i>
+            </div>
+            <div class="stat-content">
+                <h3>System Status</h3>
+                <p class="stat-value">Active</p>
+                <small>Ready to predict</small>
+            </div>
+        </div>
+        
+        <div class="stat-card slide-up" style="animation-delay: 0.4s">
+            <div class="stat-icon efficiency-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Efficiency</h3>
+                <p class="stat-value">95%</p>
+                <small>Model accuracy</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons slide-up" style="animation-delay: 0.5s">
+        <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle"></i> Make a Prediction
+        </a>
+        <a href="{{ url_for('history') }}" class="btn btn-secondary btn-lg">
+            <i class="fas fa-list"></i> View History
+        </a>
+        <a href="{{ url_for('analytics') }}" class="btn btn-info btn-lg">
+            <i class="fas fa-chart-bar"></i> Analytics
+        </a>
+    </div>
+    
+    <!-- Recent Predictions -->
+    {% if stats.recent_predictions %}
+        <div class="recent-predictions slide-up" style="animation-delay: 0.6s">
+            <h2 class="section-title">Recent Predictions</h2>
+            <div class="predictions-table-wrapper">
+                <table class="predictions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Temperature</th>
+                            <th>Wind Speed</th>
+                            <th>Predicted Power</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pred in stats.recent_predictions %}
+                            <tr class="prediction-row">
+                                <td>{{ pred.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ pred.temperature }}°C</td>
+                                <td>{{ pred.wind_speed }} m/s</td>
+                                <td>
+                                    <span class="power-badge">{{ pred.predicted_power }} kW</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state slide-up" style="animation-delay: 0.6s">
+            <i class="fas fa-sun-cloud"></i>
+            <h3>No predictions yet</h3>
+            <p>Start by making your first solar energy prediction!</p>
+            <a href="{{ url_for('predict') }}" class="btn btn-primary">Make Prediction</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

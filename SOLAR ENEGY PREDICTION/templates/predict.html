@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Make Prediction - Solar Energy Prediction{% endblock %}
+
+{% block content %}
+<div class="predict-container">
+    <div class="predict-header slide-down">
+        <h1>Solar Energy Prediction</h1>
+        <p>Input weather parameters to predict solar power yield</p>
+    </div>
+    
+    <div class="predict-card slide-up">
+        <form id="predictionForm" class="prediction-form">
+            <div class="form-section">
+                <h3 class="section-title"><i class="fas fa-sun"></i> Solar Conditions</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="angle_of_incidence" class="form-label">
+                            <i class="fas fa-sun"></i> Solar Angle
+                        </label>
+                        <input 
+                            type="number" 
+                            id="angle_of_incidence" 
+                            name="angle_of_incidence" 
+                            class="form-control" 
+                            placeholder="Degrees"
+                            min="0"
+                            max="180"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Solar incidence angle in degrees</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="total_cloud_cover_sfc" class="form-label">
+                            <i class="fas fa-cloud"></i> Sky Cover
+                        </label>
+                        <input 
+                            type="number" 
+                            id="total_cloud_cover_sfc" 
+                            name="total_cloud_cover_sfc" 
+                            class="form-control" 
+                            placeholder="0-100"
+                            min="0"
+                            max="100"
+                            step="1"
+                            required
+                        >
+                        <small class="form-hint">Total cloud cover percentage</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title"><i class="fas fa-thermometer"></i> Weather Data</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="temperature_2_m_above_gnd" class="form-label">
+                            <i class="fas fa-temperature-high"></i> Temperature
+                        </label>
+                        <input 
+                            type="number" 
+                            id="temperature_2_m_above_gnd" 
+                            name="temperature_2_m_above_gnd" 
+                            class="form-control" 
+                            placeholder="Celsius"
+                            min="-50"
+                            max="60"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Temperature at 2 m above ground (°C)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="relative_humidity_2_m_above_gnd" class="form-label">
+                            <i class="fas fa-droplet"></i> Humidity
+                        </label>
+                        <input 
+                            type="number" 
+                            id="relative_humidity_2_m_above_gnd" 
+                            name="relative_humidity_2_m_above_gnd" 
+                            class="form-control" 
+                            placeholder="Percentage"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Relative humidity at 2 m above ground (%)</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wind_speed_10_m_above_gnd" class="form-label">
+                            <i class="fas fa-wind"></i> Wind Speed
+                        </label>
+                        <input 
+                            type="number" 
+                            id="wind_speed_10_m_above_gnd" 
+                            name="wind_speed_10_m_above_gnd" 
+                            class="form-control" 
+                            placeholder="m/s"
+                            min="0"
+                            max="50"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Wind speed at 10 m above ground (m/s)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wind_direction_10_m_above_gnd" class="form-label">
+                            <i class="fas fa-compass"></i> Wind Direction
+                        </label>
+                        <input 
+                            type="number" 
+                            id="wind_direction_10_m_above_gnd" 
+                            name="wind_direction_10_m_above_gnd" 
+                            class="form-control" 
+                            placeholder="Degrees"
+                            min="0"
+                            max="360"
+                            step="1"
+                            required
+                        >
+                        <small class="form-hint">Wind direction at 10 m above ground (degrees)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title"><i class="fas fa-eye"></i> Atmospheric Conditions</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shortwave_radiation_backwards_sfc" class="form-label">
+                            <i class="fas fa-sun"></i> Solar Radiation
+                        </label>
+                        <input 
+                            type="number" 
+                            id="shortwave_radiation_backwards_sfc" 
+                            name="shortwave_radiation_backwards_sfc" 
+                            class="form-control" 
+                            placeholder="W/m²"
+                            min="0"
+                            max="1200"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Solar radiation in W/m²</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mean_sea_level_pressure_MSL" class="form-label">
+                            <i class="fas fa-tachometer-alt"></i> Pressure
+                        </label>
+                        <input 
+                            type="number" 
+                            id="mean_sea_level_pressure_MSL" 
+                            name="mean_sea_level_pressure_MSL" 
+                            class="form-control" 
+                            placeholder="hPa"
+                            min="900"
+                            max="1050"
+                            step="0.1"
+                            required
+                        >
+                        <small class="form-hint">Mean sea level pressure in hPa</small>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="predictBtn">
+                <i class="fas fa-lightning-bolt"></i> Predict Solar Power
+            </button>
+        </form>
+    </div>
+    
+    <!-- Prediction Result -->
+    <div id="resultContainer" class="predict-card result-card" style="display: none;">
+        <div class="result-content">
+            <div class="result-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Prediction Result</h2>
+            <div class="result-value">
+                <span id="resultPower">0</span> <span class="unit">kW</span>
+            </div>
+            <p id="resultMessage" class="result-message"></p>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                <i class="fas fa-redo"></i> Make Another Prediction
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('predictBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch('{{ url_for("predict") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('resultPower').textContent = data.predicted_power;
+                document.getElementById('resultMessage').textContent = data.message;
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('resultContainer').classList.add('fade-in-result');
+                
+                showNotification(data.message, 'success');
+            } else {
+                showNotification(data.message, 'error');
+            }
+        } catch (error) {
+            showNotification('Prediction failed. Please try again.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+    
+    function resetForm() {
+        document.getElementById('predictionForm').reset();
+        document.getElementById('resultContainer').style.display = 'none';
+    }
+</script>
+
+<style>
+    .fade-in-result {
+        animation: slideInUp 0.6s ease-out;
+    }
+</style>
+{% endblock %}

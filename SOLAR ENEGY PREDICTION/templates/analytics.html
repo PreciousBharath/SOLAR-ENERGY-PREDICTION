@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Solar Energy Prediction{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header slide-down">
+        <h1>Analytics & Statistics</h1>
+        <p>Analyze your solar energy prediction trends</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="analytics-stats slide-up">
+        <div class="stat-card">
+            <div class="stat-icon stats-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Predictions</h3>
+                <p class="stat-value">{{ stats.total }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon avg-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Average Power</h3>
+                <p class="stat-value">{{ stats.average }} kW</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon max-icon">
+                <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Maximum Power</h3>
+                <p class="stat-value">{{ stats.max }} kW</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon min-icon">
+                <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Minimum Power</h3>
+                <p class="stat-value">{{ stats.min }} kW</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon week-icon">
+                <i class="fas fa-calendar-week"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Last 7 Days</h3>
+                <p class="stat-value">{{ stats.last_7_days }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart -->
+    <div class="chart-container slide-up">
+        <div class="chart-card">
+            <h2 class="chart-title">Prediction Trend</h2>
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load chart data
+    fetch('{{ url_for("predictions_chart_data") }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.dates && data.dates.length > 0) {
+                const ctx = document.getElementById('trendChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [{
+                            label: 'Solar Power Yield (kW)',
+                            data: data.powers,
+                            borderColor: '#FFB03B',
+                            backgroundColor: 'rgba(255, 176, 59, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#FFB03B',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    color: '#333',
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#666' },
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            },
+                            x: {
+                                ticks: { color: '#666' },
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+</script>
+{% endblock %}
